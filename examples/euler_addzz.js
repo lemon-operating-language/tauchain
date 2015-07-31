@@ -95,37 +95,43 @@ function prove(goal, maxNumberOfSteps) {
 }
 
 function unify(s, senv, d, denv, f) {
-  if (typeof(trace) != 'undefined' && f) 
-document.writeln(step + ' UNIFY ' + /*JSON.stringify*/printterm(s) + ' WITH ' + /*JSON.stringify*/printterm(d) )
-    if (f && typeof(senv) != 'undefined') document.writeln('SSUB ' + prints(senv))
-    else if (f) document.writeln('SSUB')
-    if (f && typeof(denv) != 'undefined') document.writeln('DSUB ' + prints(denv))
-    else if (f) document.writeln('DSUB')
+//  if (typeof(trace) != 'undefined' && f) 
+var r = false, ns=false;
   if (isVar(s.pred)) {
     var sval = evaluate(s, senv)
-    if (sval != null) return unify(sval, senv, d, denv, f)
-    else return true
+    if (sval != null) r = unify(sval, senv, d, denv, f)
+    else r = true
   }
   else if (isVar(d.pred)) {
     var dval = evaluate(d, denv)
-    if (dval != null) return unify(s, senv, dval, denv, f)
+    if (dval != null) r = unify(s, senv, dval, denv, f)
     else {
       if (f != null) {
 	denv[d.pred] = evaluate(s, senv)
-    	document.writeln('NEW SUB ' + d.pred + '=' + printterm(denv[d.pred]) + ' DURING ' + printterm(s) + '|' + printterm(d) + '|' + prints(senv) + '|' + prints(denv))
+	ns = true
 	}
-      return true
+      r = true
     }
   }
   else if (s.pred == d.pred && s.args.length == d.args.length) {
-    for (var i = 0; i < s.args.length; i++) if (!unify(s.args[i], senv, d.args[i], denv, f)) return false
-    return true
+    var tt = true;
+    for (var i = 0; i < s.args.length; i++) if (!unify(s.args[i], senv, d.args[i], denv, f)) { r = false; tt = false; break; }
+    if(tt) r = true
   }
   else {
-    if (f && typeof(trace) != 'undefined') document.writeln('FAILED TO UNIFY ' + printterm(s) + ' WITH ' + printterm(d))
-    if (f && typeof(denv) != 'undefined') document.writeln('DFSUB ' + prints(denv))
-    return false
+//    if (f && typeof(trace) != 'undefined') document.writeln('FAILED TO UNIFY ' + printterm(s) + ' WITH ' + printterm(d))
+//    if (f && typeof(denv) != 'undefined') document.writeln('DFSUB ' + prints(denv))
+    r = false
   }
+ if(f) {
+document.writeln(step + ' UNIFY ' + /*JSON.stringify*/printterm(s) + ' WITH ' + /*JSON.stringify*/printterm(d) )
+    if (typeof(senv) != 'undefined') document.writeln('SSUB ' + prints(senv))
+    else document.writeln('SSUB')
+    if (typeof(denv) != 'undefined') document.writeln('DSUB ' + prints(denv))
+    else document.writeln('DSUB')
+    if (ns)   	document.writeln('NEW SUB ' + d.pred + '=' + printterm(denv[d.pred]) + ' DURING ' + printterm(s) + '|' + printterm(d) + '|' + prints(senv) + '|' + prints(denv))
+}
+  return r;
 }
 
 function evaluate(t, env) {
@@ -398,5 +404,5 @@ else {
   for (var i in evidence) evidence["GND"] = cases["GND"]
   t = new Date() - t
 //  print(JSON.stringify(evidence) + '\n')
-//  print('//ENDS [' + step + ' steps/' + t + ' msec]')
+  print('//ENDS [' + step + ' steps/' + t + ' msec]')
 }

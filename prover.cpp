@@ -50,11 +50,6 @@ bool prover::unify(termid _s, const subst& ssub, termid _d, subst& dsub, bool f)
 	if (!_d != !_s) return false;
 	setproc(L"unify");
 	termid v;
-	if (f) {
-		dout << steps << " UNIFY " << format(_s) << " WITH " << format(_d) << endl;
-		dout << "SSUB " << formats(ssub) << endl;
-		dout << "DSUB " << formats(dsub) << endl;
-	}
 	const term s = get(_s), d = get(_d);
 	bool r, ns = false;
 	if (s.p < 0) r = (v = evaluate(_s, ssub)) ? unify(v, ssub, _d, dsub, f) : true;
@@ -64,16 +59,15 @@ bool prover::unify(termid _s, const subst& ssub, termid _d, subst& dsub, bool f)
 			if (f) {
 				dsub[d.p] = evaluate(_s, ssub);
 				ns = true;
-				dout 	<< "NEW SUB " << dstr(d.p) << '=' << format(dsub[d.p]) << " DURING " <<
-					format(_s) << '|' << format(_d) << '|' << formats(ssub) << '|' << formats(dsub) << endl;
 			}
 			r = true;
 		}
 	}
 	else if (!(s.p == d.p && !s.s == !d.s && !s.o == !d.o)) r = false;
 	else if (!s.s) r = true;
-	else if ((r = unify(s.s, ssub, d.s, dsub, f)))
-		r = unify(s.o, ssub, d.o, dsub, f);
+	else if (!unify(s.s, ssub, d.s, dsub, f)) r = false;
+	else if (!unify(s.o, ssub, d.o, dsub, f)) r = false;
+	else r = true;
 	if (f) TRACE(dout	<< "Trying to unify " << format(_s) << " sub: " << formats(ssub)
 			<< " with " << format(_d) << " sub: " << formats(dsub);
 //		printterm_substs(_s, ssub);
@@ -87,6 +81,12 @@ bool prover::unify(termid _s, const subst& ssub, termid _d, subst& dsub, bool f)
 		dout << endl);
 //	dout<<"UNIFY"<<endl<<format(_s,true)<<endl;
 //	dout<<"WITH"<<endl<<format(_d,true)<<endl;
+	if (f) {
+		dout << steps << " UNIFY " << format(_s) << " WITH " << format(_d) << endl;
+		dout << "SSUB " << formats(ssub) << endl;
+		dout << "DSUB " << formats(dsub) << endl;
+		if (ns) dout 	<< "NEW SUB " << dstr(d.p) << '=' << format(dsub[d.p]) << " DURING " << format(_s) << '|' << format(_d) << '|' << formats(ssub) << '|' << formats(dsub) << endl;
+	}
 	return r;
 }
 
