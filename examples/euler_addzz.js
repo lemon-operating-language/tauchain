@@ -49,6 +49,7 @@ function prove(goal, maxNumberOfSteps) {
       if (c.rule.body.length != 0) g.push({src:c.rule, env:c.env})
       var r = {rule:{head:c.parent.rule.head, body:c.parent.rule.body}, src:c.parent.src, ind:c.parent.ind, 
                parent:c.parent.parent != null ? new copy(c.parent.parent) : null, env:new copy(c.parent.env), ground:g}
+      document.writeln('A ' + printterm(c.rule.head) + ' ' + prints(c.env) + ' ' + printterm(r.rule.body[r.ind]) + ' ' + prints(r.env));
       unify(c.rule.head, c.env, r.rule.body[r.ind], r.env, true)
       r.ind++
       queue.push(r)
@@ -78,9 +79,10 @@ function prove(goal, maxNumberOfSteps) {
       var g = aCopy(c.ground)
       if (rl.body.length == 0) g.push({src:rl, env:{}})
       var r = {rule:rl, src:src, ind:0, parent:c, env:{}, ground:g}
+      document.writeln('B ' + printterm(t) + ' ' + prints(c.env) + ' ' + printterm(rl.head) + ' ' + prints(r.env));
       if (unify(t, c.env, rl.head, r.env, true)) {
-        var ep = c  // euler path
-        while (ep = ep.parent) if (ep.src == c.src && unify(ep.rule.head, ep.env, c.rule.head, c.env, false)) break
+        var ep = null//c  // euler path
+//        while (ep = ep.parent) if (ep.src == c.src && unify(ep.rule.head, ep.env, c.rule.head, c.env, false)) break
         if (ep == null) {
           queue.unshift(r)
       if (typeof(r.rule) != 'undefined' && typeof(r.rule.head) != 'undefined' && typeof(r.rule.head.pred) != 'undefined' ) 
@@ -89,7 +91,7 @@ function prove(goal, maxNumberOfSteps) {
           if (typeof(trace) != 'undefined') document.writeln('EULER PATH UNSHIFT QUEUE\n' + JSON.stringify(r.rule) + '\n')
         }
       }
-    }
+    } document.writeln('BEND')
   }
   print('FAIL')
 }
@@ -124,11 +126,11 @@ var r = false, ns=false;
     r = false
   }
  if(f) {
-document.writeln(step + ' UNIFY ' + /*JSON.stringify*/printterm(s) + ' WITH ' + /*JSON.stringify*/printterm(d) )
-    if (typeof(senv) != 'undefined') document.writeln('SSUB ' + prints(senv))
-    else document.writeln('SSUB')
-    if (typeof(denv) != 'undefined') document.writeln('DSUB ' + prints(denv))
-    else document.writeln('DSUB')
+//document.writeln(step + ' UNIFY ' + /*JSON.stringify*/printterm(s) + ' WITH ' + /*JSON.stringify*/printterm(d) )
+//    if (typeof(senv) != 'undefined') document.writeln('SSUB ' + prints(senv))
+//    else document.writeln('SSUB')
+//    if (typeof(denv) != 'undefined') document.writeln('DSUB ' + prints(denv))
+//    else document.writeln('DSUB')
     if (ns)   	document.writeln('NEW SUB ' + d.pred + '=' + printterm(denv[d.pred]) + ' DURING ' + printterm(s) + '|' + printterm(d) + '|' + prints(senv) + '|' + prints(denv))
 }
   return r;

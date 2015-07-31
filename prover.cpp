@@ -82,9 +82,9 @@ bool prover::unify(termid _s, const subst& ssub, termid _d, subst& dsub, bool f)
 //	dout<<"UNIFY"<<endl<<format(_s,true)<<endl;
 //	dout<<"WITH"<<endl<<format(_d,true)<<endl;
 	if (f) {
-		dout << steps << " UNIFY " << format(_s) << " WITH " << format(_d) << endl;
-		dout << "SSUB " << formats(ssub) << endl;
-		dout << "DSUB " << formats(dsub) << endl;
+//		dout << steps << " UNIFY " << format(_s) << " WITH " << format(_d) << endl;
+//		dout << "SSUB " << formats(ssub) << endl;
+//		dout << "DSUB " << formats(dsub) << endl;
 		if (ns) dout 	<< "NEW SUB " << dstr(d.p) << '=' << format(dsub[d.p]) << " DURING " << format(_s) << '|' << format(_d) << '|' << formats(ssub) << '|' << formats(dsub) << endl;
 	}
 	return r;
@@ -96,7 +96,7 @@ bool prover::euler_path(shared_ptr<proof>& _p) {
 	proof& p = *_p;
 	termid t = kb.head()[p.rul];
 	while ((ep = ep->prev))
-		if (ep->rul == p.rul && unify(kb.head()[ep->rul], *ep->s, t, *p.s, false))
+		if (ep->rul == p.rul && unify(kb.head()[ep->rul], *ep->s, t, *p.s, true))
 			{ TRACE(dout<<"Euler path detected\n"); return true; }
 	return ep != 0;
 }
@@ -335,18 +335,11 @@ void prover::pushev(shared_ptr<proof> p) {
 
 void prover::step(shared_ptr<proof>& _p, queue_t& queue, queue_t& gnd) {
 	setproc(L"step");
-//	auto ll = mkliteral(pstr(L"a"),0,0);
-//	auto ll1 = mkliteral(pstr(L"aa"),0,0);
-//	dout<<ll->tostring()<<endl;
-//	dout<<ll1->tostring()<<endl;
-//	exit(0);
 	++steps;
 	proof& p = *_p;
 	TRACE(dout<<"popped frame " << steps << " :" << endl; printp(_p));
 	if (p.rul && kb.head()[p.rul]) dout<<steps<<' '<<format(evaluate(kb.head()[p.rul], p.s))<<endl;
 	else dout<<steps<<" {}"<<endl;
-	if (steps == 47)
-		steps += 0;
 	dout<<steps<< " FSUB:"<<formats(p.s)<<endl;
 	dout<<steps<< " LEN:"<<queue.size()<<endl;
 	if (p.last != kb.body()[p.rul].size()) {
@@ -357,6 +350,7 @@ void prover::step(shared_ptr<proof>& _p, queue_t& queue, queue_t& gnd) {
 		if (it == kb.r2id.end()) return;
 		for (auto rl : it->second) {
 			subst s;
+			dout << "B " << format(t) << ' ' << formats(*p.s) << ' ' << format(kb.head()[rl]) << endl;
 			if (unify(t, *p.s, kb.head()[rl], s, true)) {
 				shared_ptr<proof> r = make_shared<proof>(rl, 0, _p, s, p.g);
 				if (kb.body()[rl].empty()) r->g.emplace_back(rl, (shared_ptr<subst>)0);
@@ -375,6 +369,7 @@ void prover::step(shared_ptr<proof>& _p, queue_t& queue, queue_t& gnd) {
 		shared_ptr<proof> r = make_shared<proof>(*p.prev, p.g);
 		ruleid rl = p.rul;
 		if (!kb.body()[rl].empty()) r->g.emplace_back(rl, p.s);
+		dout << "A " << format(kb.head()[rl]) << ' ' << formats(*p.s) << ' ' << format(kb.body()[r->rul][r->last]) << ' ' << formats(*p.prev->s) << endl;
 		unify(kb.head()[rl], *p.s, kb.body()[r->rul][r->last], *(r->s = make_shared<subst>(*p.prev->s)), true);
 		++r->last;
 		queue.push_back(r);
