@@ -117,7 +117,7 @@ termid prover::list_next(termid cons, proof& p) {
 	setproc(L"list_next");
 	termset ts;
 	ts.push_back(make(rdfrest, cons, tmpvar()));
-	query( ts, &*p.s);
+	do_query( ts, &*p.s);
 	if (e.find(rdfrest) == e.end()) return 0;
 	termid r = 0;
 	for (auto x : e[rdfrest])
@@ -134,7 +134,7 @@ termid prover::list_first(termid cons, proof& p) {
 	setproc(L"list_first");
 	termset ts;
 	ts.push_back(make(rdffirst, cons, tmpvar()));
-	query( ts , &*p.s);
+	do_query( ts , &*p.s);
 	if (e.find(rdffirst) == e.end()) return 0;
 	termid r = 0;
 	for (auto x : e[rdffirst])
@@ -519,6 +519,7 @@ prover::termset prover::qdb2termset(const qdb &q_) {
 			dict[q->pred] != rdfrest &&
 			(t = quad2term(*q, q_)))
 			goal.push_back(t);
+	return goal;
 }
 
 
