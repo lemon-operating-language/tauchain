@@ -5,7 +5,7 @@
     Created on: Apr 28, 2015
         Author: Ohad Asor
 */
-
+#include <chrono>
 #include <deque>
 #include <climits>
 #include "rdf.h"
@@ -61,7 +61,10 @@ public:
 	prover ( ruleset* kb = 0 );
 	prover ( string filename );
 	prover ( const prover& p );
-	void query(termset& goal, subst* s = 0);
+	termset qdb2termset(const qdb &q_);
+	int  do_query(const termset& goal, subst* s = 0);
+	void do_query(const qdb& goal, subst* s = 0);
+	void query(const termset& goal, subst* s = 0);
 	void query(const qdb& goal, subst* s = 0);
 	const term& get(termid) const;
 	const term& get(nodeid) const { throw std::runtime_error("called get(termid) with nodeid"); }
