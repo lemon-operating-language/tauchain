@@ -586,9 +586,6 @@ int prover::do_query(const termset& goal, substs * s) {
 	//queue.push_front(p);
 
 	shared_ptr<proof> q;
-	using namespace std;
-	using namespace std::chrono;
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	do {
 		q = queue.top();//.get();
 		queue.pop();
@@ -596,12 +593,10 @@ int prover::do_query(const termset& goal, substs * s) {
 		step(q);
 	} while (!queue.empty());// && steps < 2e+7);
 
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>( t2 - t1 ).count();
 	while (!gnd.empty()) { auto x = gnd.top(); gnd.pop(); pushev(x); }
 	TRACE(dout << KMAG << "Evidence:" << endl;printe();/* << ejson()->toString()*/ dout << KNRM);
 //	TRACE(dout << "elapsed: " << (duration / 1000.) << "ms steps: " << steps << " evaluations: " << evals << " unifications: " << unifs << endl);
-	return duration/1000.;
+	return -1;
 	//for (auto x : gnd) pushev(x);
 }
 

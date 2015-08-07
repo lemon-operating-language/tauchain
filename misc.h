@@ -42,7 +42,7 @@ struct _setproc {
 	~_setproc();
 };
 #ifdef DEBUG
-#define setproc(x) _setproc __setproc(x)
+#define setproc(x)
 #else
 #define setproc(x)
 #endif
