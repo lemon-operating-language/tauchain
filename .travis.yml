@@ -13,9 +13,8 @@ script:
   - make m-tau
 
 before_install:
+  - sudo add-apt-repository ppa:h-rayflood/llvm
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libboost-dev clang++-3.6
-#for with_marpa:
-  - sudo apt-get install -qq libboost-regex-dev
+  - sudo apt-get install -qq  libboost-regex-dev libboost-dev  clang-3.6
 
 install: ./build-libmarpa.sh
