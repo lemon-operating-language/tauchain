@@ -15,6 +15,6 @@ script:
 before_install:
   - sudo add-apt-repository ppa:h-rayflood/llvm -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq  libboost-regex-dev libboost-dev  clang-3.6
+  - sudo apt-get install -qq  libboost-regex-dev libboost-dev  clang-3.7
 
 install: ./build-libmarpa.sh
