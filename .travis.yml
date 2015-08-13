@@ -1,18 +1,20 @@
 language: cpp
 
 compiler:
-  - clang
-
+  - clang++-3.6
+  
 before_script:
   - mkdir build
   - cd build
   - cmake ..
 
-script: make
+script:
+  - make tau
+  - make m-tau
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libboost-dev
+  - sudo apt-get install -qq libboost-dev clang++-3.6
 #for with_marpa:
   - sudo apt-get install -qq libboost-regex-dev
 
