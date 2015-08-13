@@ -936,7 +936,7 @@ int parse_natural3(qdb &kb, qdb &q, std::wistream &f, string base)
 
     static prover grmr(gkb);
     TRACE(dout << "grammar loaded."<<std::endl);
-    static Marpa* parser = Marpa(grmr, dict[mkiri(L"http://www.w3.org/2000/10/swap/grammar/n3#language"));
+    static Marpa* parser = Marpa(&grmr, dict[mkiri(pstr(L"http://www.w3.org/2000/10/swap/grammar/n3#language"))]);
 
     string in = load_file(f);
     termid raw;
