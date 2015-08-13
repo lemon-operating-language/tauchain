@@ -1,7 +1,7 @@
 language: cpp
 
 compiler:
-  - clang++-3.6
+  - clang
   
 before_script:
   - mkdir build
@@ -13,7 +13,7 @@ script:
   - make m-tau
 
 before_install:
-  - sudo add-apt-repository ppa:h-rayflood/llvm
+  - sudo add-apt-repository ppa:h-rayflood/llvm -y
   - sudo apt-get update -qq
   - sudo apt-get install -qq  libboost-regex-dev libboost-dev  clang-3.6
 
